@@ -1,29 +1,36 @@
 // Main.js
 import React from 'react';
-import { Layout, Tabs } from 'antd';
-import AppHeader from './AppHeader';
+import { Tabs, Layout } from 'antd';
+import { Navigate } from 'react-router-dom';
 import CalendarTab from './CalendarTab';
 import FileListTab from './FileListTab';
 
-const { Content } = Layout;
-const { TabPane } = Tabs;
+// import MedCalendar from './components/MedCalendar';
 
-export default function Main() {
-  return (
-    <Layout>
-      <AppHeader />
-      <Content style={{ padding: '0 50px', marginTop: 64 }}>
-        <div style={{ background: '#fff', padding: 24, minHeight: 380 }}>
-          <Tabs defaultActiveKey="1">
-            <TabPane tab="Calendar" key="1">
+const { TabPane } = Tabs;
+const { Content } = Layout;
+
+export default function Main(key) {
+
+  const isUserSignedIn = false;// Determine if the user is signed in 
+
+
+  if (!isUserSignedIn) {
+    return <Navigate replace to="/login" />;
+  } else {
+    return (
+      <Content>
+        {/* <div style={{ background: '#fff', padding: 24, minHeight: 380 }}> */}
+          <Tabs defaultActiveKey={{key}}>
+            <TabPane tab="Calendar" key="calendar">
               <CalendarTab />
             </TabPane>
-            <TabPane tab="Medical Files" key="2">
+            <TabPane tab="Medical Files" key="files">
               <FileListTab />
             </TabPane>
           </Tabs>
-        </div>
+        {/* </div> */}
       </Content>
-    </Layout>
-  );
+    );
+  }
 }

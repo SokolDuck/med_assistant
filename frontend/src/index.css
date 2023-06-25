@@ -11,3 +11,12 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+.main-form-button, .secondary-form-button {
+  width: 100%;
+}
+
+.login-form {
+  max-width: 400px;
+}
