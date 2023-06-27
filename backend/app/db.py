@@ -15,3 +15,5 @@ async def setup_db(app: web.Application):
     ahsa.setup(app, [
         ahsa.bind(f"{config['database']['schema']}://{config['database']['name']}"),
     ])
+
+get_session = ahsa.get_session

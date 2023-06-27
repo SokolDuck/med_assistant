@@ -1,18 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { Form, Input, Button } from 'antd';
 import { LockOutlined, MailOutlined } from '@ant-design/icons';
+import { useNavigate } from "react-router-dom";
 
 
 const RegistrationForm = () => {
+  const navigate = useNavigate();
+
   const [form] = Form.useForm();
+  const [serverError, setServerError] = useState('');
 
   const handleFinish = async (values) => {
     const { email, password } = values;
 
     try {
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/user/registration`, { email, password });
-      console.log(response.data);  // handle response data as needed
+      if (response.data.error) {
+        console.log(response.data.error);  // handle response data as needed
+
+        setServerError(response.data.error);
+      } else {
+        console.log("nav")
+        navigate("/login");
+      }
     } catch (err) {
       console.error(err);
     }
@@ -49,6 +60,8 @@ const RegistrationForm = () => {
               message: 'Please input your email!',
             },
           ]}
+          validateStatus={serverError ? "error" : "success" }
+          help={serverError}
         >
           <Input prefix={<MailOutlined className="site-form-item-icon" />} placeholder="Email" />
         </Form.Item>

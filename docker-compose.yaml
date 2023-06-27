@@ -22,3 +22,9 @@ services:
     env_file:
       - ./frontend/.env
     command: npm start
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - 80:80

@@ -2,10 +2,16 @@
 import asyncio
 import logging
 from aiohttp import web
+from aiohttp_session import setup as setup_session
+from aiohttp_session.cookie_storage import EncryptedCookieStorage
+from aiohttp_security import SessionIdentityPolicy, api
+
+from cryptography import fernet
 
 from app.routes import setup_routes, setup_cors
 from app.settings import get_config
 from app.db import setup_db
+from app.authz import user_middleware
 
 
 async def init():
@@ -17,6 +23,17 @@ async def init():
     # https://github.com/aio-libs/aiohttp-cors
     setup_cors(app)
     await setup_db(app)
+
+    # Session setup
+    secret_key = conf["secret_key"]
+    f = fernet.Fernet(secret_key)
+    setup_session(app, EncryptedCookieStorage(f))
+    app[api.IDENTITY_KEY] = SessionIdentityPolicy("patient")
+
+    app.middlewares.append(user_middleware)
+
+    # TODO: setup swagger
+
     host, port = conf['host'], conf['port']
     return app, host, port
 

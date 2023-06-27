@@ -1,54 +1,49 @@
-import datetime
-from typing import List
+
 from aiohttp import web
-from app.models import File
-from app.utils import store_file_to_s3, fetch_file_list_from_s3
-import sqlalchemy as sa
 
-import aiohttp_sqlalchemy as ahsa
+from app.models import User
+from app.authz import unauthorized
 
+# Create a routing table
+routes = web.RouteTableDef()
 
-async def file_upload(request: web.Request):
-    data = await request.post()
-    file = data['file']
-    original_filename = file.filename
-    content_type = file.content_type
-
-    storage_filename = await store_file_to_s3(file.file, original_filename, content_type)
-
-    new_file = File(
-        original_filename=original_filename,
-        storage_filename=storage_filename,
-        upload_date=datetime.datetime.utcnow(),
-        content_type=content_type,
-        size=0
-    )
+# Create a password context for hashing
 
 
-    sa_session = ahsa.get_session(request)
-    async with sa_session.begin():
-        sa_session.add(new_file)
-
-    return web.Response(text='File uploaded successfully.')
-
-async def get_file_list(request: web.Request):
-    # Use a helper function to fetch the file list from your S3 bucket.
-    # file_list = await fetch_file_list_from_s3()
-    # for file in file_list:
-    #     file["LastModified"] = str(file["LastModified"])
-
-    sa_session = ahsa.get_session(request)
-    async with sa_session.begin():
-        result = await sa_session.execute(sa.select(File))
-        result: List[File] = result.scalars()
-
-    file_list = [
-        {"id": instance.id, "original_filename": instance.original_filename}
-        for instance in result
-    ]
-
-    print(file_list)
-    return web.json_response(file_list)
-
+@routes.get("/")
+@unauthorized
 async def index(request: web.Request):
-    return web.Response(text="Hello")
+    """
+    ---
+    description: This end-point allow to test that service is up.
+    tags:
+    - Health check
+    responses:
+        "200":
+            description: successful operation. Return "Hello" text
+    """
+    return web.json_response({"text": "Hello"})
+
+
+
+
+async def update_user(request):
+    user = await check_authorized(request)
+    data = await request.json()
+    new_email = data.get('email')
+    new_password = data.get('password')
+    
+    password_hash = await hash_password(new_password) if new_password else None
+    
+    async with request.app['db'].acquire() as conn:
+        if new_email:
+            await conn.execute(User.update().where(User.username == user.username).values(email=new_email))
+        if password_hash:
+            await conn.execute(User.update().where(User.username == user.username).values(password=password_hash))
+
+    return web.Response(text='Profile updated successfully')
+
+async def sign_out(request):
+    response = web.Response(text='Logged out successfully')
+    await forget(request, response)
+    return response
