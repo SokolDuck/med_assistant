@@ -21,6 +21,24 @@ export function isSignedIn() {
 }
 
 
+export function getUserData() {
+    const token = getCookie("token");
+
+    if (token === "") {
+        return null;
+    } else {
+        const data = jwt_decode(token);
+        console.log("parsed data: ", data);
+
+        return data
+    }
+}
+
+export function signOut() {
+    document.cookie = 'token=; Max-Age=0';
+}
+
+
 function getCookie(cname) {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);

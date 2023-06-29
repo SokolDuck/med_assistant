@@ -7,11 +7,14 @@ aiohttp-devtools
 pyyaml
 aiosqlite
 aiohttp-sqlalchemy==0.34.0
-aiohttp-swagger
+# aiohttp-swagger
 aioauth-client
-aiohttp_session[secure]
-aiohttp_security
-aiohttp_jwt
+# aiohttp_session[secure]
+# aiohttp_security
+# aiohttp_jwt
+PyJWT
+passlib
+
 
 # aiomysql==0.0.22  # if using MySQL
 # or
