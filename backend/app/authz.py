@@ -12,12 +12,17 @@ from app.settings import config
 
 
 UNAUTHORIZED_HANDLERS = []
+EXCEPTION_URLS = ["/"]
 
 def unauthorized(func):
-    UNAUTHORIZED_HANDLERS.append(func)
+
+    if callable(func):
+        print("WARNING! unauthorized decorator was deprecated")
+        UNAUTHORIZED_HANDLERS.append(func)
+    else:
+        EXCEPTION_URLS.append(func)
 
     return func
-
 
 
 async def jwt_decode(jwt_token):
@@ -31,10 +36,13 @@ async def jwt_decode(jwt_token):
 
 SAVE_METHODS = ('OPTIONS')
 
+
 @web.middleware
 async def user_middleware(request: web.Request,
                      handler: Callable[[web.Request], Awaitable[web.Response]]):
-    if handler not in UNAUTHORIZED_HANDLERS and request.method not in SAVE_METHODS:
+    
+    if request.path not in EXCEPTION_URLS and request.method not in SAVE_METHODS:
+    # if handler not in UNAUTHORIZED_HANDLERS and request.method not in SAVE_METHODS:
         if 'Authorization' not in request.headers:
             raise web.HTTPUnauthorized()
 

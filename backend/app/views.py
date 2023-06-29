@@ -11,7 +11,7 @@ routes = web.RouteTableDef()
 
 
 @routes.get("/")
-@unauthorized
+# @unauthorized
 async def index(request: web.Request):
     """
     ---
