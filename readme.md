@@ -32,18 +32,21 @@ A project for managing personal medical exams and maintaining a medical calendar
     - axios # https://axios-http.com/docs/intro
 
 ## Current status of the project
-two pages:
+pages:
+- login page ![logn page](./files/login_page.png)
 - plain calendar ![calendar page](./files/calendar_page.png)
 - list of downloaded files ![files page](./files/files_list.png)
 - upload form
 
 ## TODO
 
-1. Create Users API + UI
-2. Modify Files list
-3. Add calendar events
-4. Create files classification.
-5. Integrate with telegram bot (for notifications)
+1. [Back] Refactor User backend logic
+2. [Front] Clean menu on main pages 
+2. [Front] Create design plan
+2. [Front] Modify Files list
+3. [Back] Add calendar events
+4. [Back][Front] Create files classification.
+5. [Back] Integrate with telegram bot (for notifications)
 
 # Setup dev environment
 
