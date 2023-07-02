@@ -107,7 +107,7 @@ const LoginForm = () => {
             >
           Sign up with Google 
           </Button>
-          Or <Link to="/registration">register now!</Link>
+          Or <Link to="/sign-up">register now!</Link>
           </div>
       </Content>
     );
